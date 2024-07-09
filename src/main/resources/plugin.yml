@@ -2,3 +2,10 @@ name: ControlSuite
 version: '${project.version}'
 main: com.paccothetaco.controlsuite.Main
 api-version: '1.21'
+author: PaccoTheTaco
+description: A plugin that allows you to control your server with ease.
+commands:
+  invsee:
+    description: Allows you to see the inventory of another player.
+    usage: /invsee <player>
+    permission: op
