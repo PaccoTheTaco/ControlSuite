@@ -1,0 +1,4 @@
+name: ControlSuite
+version: '${project.version}'
+main: com.paccothetaco.controlsuite.Main
+api-version: '1.21'
