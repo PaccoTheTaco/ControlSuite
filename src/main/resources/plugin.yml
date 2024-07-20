@@ -12,4 +12,20 @@ commands:
   ec:
     description: Allows you to open the ender chest of another player.
     usage: /ec <player>
+
+  settings:
+    description: Allows you to change the settings of the plugin.
+    usage: /settings
     permission: op
+
+  removeec:
+    description: Removes Enderchest Permission from a player.
+    usage: /removeec <player>
+    permission: op
+
+  addec:
+    description: Adds Enderchest Permission to a player.
+    usage: /addec <player>
+    permission: op
+
+
