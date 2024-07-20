@@ -5,18 +5,18 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 public class InvseeHolder implements InventoryHolder {
-    private final Player player;
+    private final Player target;
 
-    public InvseeHolder(Player player) {
-        this.player = player;
+    public InvseeHolder(Player target) {
+        this.target = target;
+    }
+
+    public Player getTarget() {
+        return target;
     }
 
     @Override
     public Inventory getInventory() {
-        return player.getInventory();
-    }
-
-    public Player getPlayer() {
-        return player;
+        return null;
     }
 }
