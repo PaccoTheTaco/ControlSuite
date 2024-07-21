@@ -12,6 +12,7 @@ commands:
   ec:
     description: Allows you to open the ender chest of another player.
     usage: /ec <player>
+    aliases: [enderchest, echest]
   settings:
     description: Allows you to change the settings of the plugin.
     usage: /settings
@@ -36,4 +37,16 @@ commands:
   setwarp:
     description: Sets a warp.
     usage: /setwarp <warp>
+    permission: op
+  addhome:
+    description: Adds Home Permission to a player.
+    usage: /addhome <player>
+    permission: op
+  removehome:
+    description: Removes Home Permission from a player.
+    usage: /removehome <player>
+    permission: op
+  giveallperms:
+    description: Gives all current permissions to a player.
+    usage: /giveallperms <player>
     permission: op

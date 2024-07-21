@@ -54,6 +54,25 @@ public class ConfigManager {
         return authorizedPlayers.contains(playerUUID.toString());
     }
 
+    public void addHomeAuthorizedPlayer(UUID playerUUID) {
+        List<String> authorizedPlayers = config.getStringList("homeAuthorizedPlayers");
+        authorizedPlayers.add(playerUUID.toString());
+        config.set("homeAuthorizedPlayers", authorizedPlayers);
+        saveConfig();
+    }
+
+    public void removeHomeAuthorizedPlayer(UUID playerUUID) {
+        List<String> authorizedPlayers = config.getStringList("homeAuthorizedPlayers");
+        authorizedPlayers.remove(playerUUID.toString());
+        config.set("homeAuthorizedPlayers", authorizedPlayers);
+        saveConfig();
+    }
+
+    public boolean isHomePlayerAuthorized(UUID playerUUID) {
+        List<String> authorizedPlayers = config.getStringList("homeAuthorizedPlayers");
+        return authorizedPlayers.contains(playerUUID.toString());
+    }
+
     private void saveConfig() {
         try {
             config.save(configFile);

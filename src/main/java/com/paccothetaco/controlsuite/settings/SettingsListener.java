@@ -27,6 +27,8 @@ public class SettingsListener implements Listener {
 
             if (clickedItem.getType() == Material.ENDER_CHEST) {
                 SettingsGUI.openEnderchestSettingsMenu((Player) event.getWhoClicked());
+            } else if (clickedItem.getType() == Material.BLUE_BED) {
+                SettingsGUI.openHomeSettingsMenu((Player) event.getWhoClicked());
             }
         } else if (title.equals(ChatColor.GOLD + "Use /enderchest")) {
             event.setCancelled(true);
@@ -47,6 +49,26 @@ public class SettingsListener implements Listener {
             }
 
             configManager.saveSetting("enderchest", settingValue);
+            event.getWhoClicked().closeInventory();
+        } else if (title.equals(ChatColor.GOLD + "Use /home")) {
+            event.setCancelled(true);
+
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+            String settingValue = "noone";
+            if (clickedItem.getType() == Material.RED_WOOL) {
+                event.getWhoClicked().sendMessage(ChatColor.RED + "No one can use /home");
+                settingValue = "noone";
+            } else if (clickedItem.getType() == Material.GREEN_WOOL) {
+                event.getWhoClicked().sendMessage(ChatColor.GREEN + "Everyone can use /home");
+                settingValue = "everyone";
+            } else if (clickedItem.getType() == Material.YELLOW_WOOL) {
+                event.getWhoClicked().sendMessage(ChatColor.YELLOW + "Specific players can use /home");
+                settingValue = "specific";
+            }
+
+            configManager.saveSetting("home", settingValue);
             event.getWhoClicked().closeInventory();
         }
     }
