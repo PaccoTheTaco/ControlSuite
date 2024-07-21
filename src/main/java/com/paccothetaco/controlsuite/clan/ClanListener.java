@@ -1,5 +1,6 @@
 package com.paccothetaco.controlsuite.clan;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,6 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import com.paccothetaco.controlsuite.Main;
+import org.bukkit.ChatColor;
 
 public class ClanListener implements Listener {
 
@@ -70,6 +72,8 @@ public class ClanListener implements Listener {
                     player.closeInventory();
                 } else if (clickedItem.getType() == Material.PAPER) {
                     clanCommand.openManageMembersGUI(player, playerClan);
+                } else if (clickedItem.getType() == Material.OAK_SIGN) {
+                    clanCommand.openInvitePlayerGUI(player, playerClan);
                 }
             }
         } else if (event.getView().getTitle().startsWith("Manage Members: ")) {
@@ -85,10 +89,34 @@ public class ClanListener implements Listener {
                     .orElse(null);
 
             if (playerClan != null && clickedItem.getType() == Material.PLAYER_HEAD) {
-                ClanCommand clanCommand = new ClanCommand();
-                clanCommand.removeMember(player, playerClan, memberName);
+                if (playerClan.getOwner().equals(memberName)) {
+                    player.sendMessage("You cannot remove yourself from the clan.");
+                } else {
+                    ClanCommand clanCommand = new ClanCommand();
+                    clanCommand.removeMember(player, playerClan, memberName);
+                    player.closeInventory();
+                    clanCommand.openManageMembersGUI(player, playerClan);
+                }
+            }
+        } else if (event.getView().getTitle().startsWith("Invite Player: ")) {
+            event.setCancelled(true);
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+            Player player = (Player) event.getWhoClicked();
+            String inviteeName = clickedItem.getItemMeta().getDisplayName();
+            Player invitee = Bukkit.getPlayer(inviteeName);
+            Clan playerClan = ClanCommand.clans.stream()
+                    .filter(clan -> clan.getOwner().equals(player.getName()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (playerClan != null && invitee != null && invitee.isOnline()) {
+                playerClan.addInvitation(inviteeName);
+                invitee.sendMessage(ChatColor.GREEN + "You have been invited to the clan " + playerClan.getName() + ".");
+                invitee.sendMessage(ChatColor.GREEN + "Type /clan accept " + playerClan.getName() + " to join or /clan decline " + playerClan.getName() + " to decline.");
+                player.sendMessage(ChatColor.GREEN + "Invitation sent to " + inviteeName);
                 player.closeInventory();
-                clanCommand.openManageMembersGUI(player, playerClan);
             }
         }
     }

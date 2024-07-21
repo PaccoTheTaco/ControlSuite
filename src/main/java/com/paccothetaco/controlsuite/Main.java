@@ -1,19 +1,19 @@
 package com.paccothetaco.controlsuite;
 
+import com.paccothetaco.controlsuite.Invsee.InvseeListener;
 import com.paccothetaco.controlsuite.clan.ChatListener;
 import com.paccothetaco.controlsuite.clan.ClanListener;
 import com.paccothetaco.controlsuite.enderchest.EnderchestCommand;
 import com.paccothetaco.controlsuite.enderchest.AddAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.enderchest.RemoveAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.Invsee.InvseeCommand;
-import com.paccothetaco.controlsuite.Invsee.InvseeListener;
 import com.paccothetaco.controlsuite.settings.SettingsCommand;
-import com.paccothetaco.controlsuite.settings.SettingsListener;
 import com.paccothetaco.controlsuite.settings.ConfigManager;
 import com.paccothetaco.controlsuite.home.HomeCommand;
 import com.paccothetaco.controlsuite.home.SetHomeCommand;
 import com.paccothetaco.controlsuite.home.AddHomeAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.home.RemoveHomeAuthorizedPlayerCommand;
+import com.paccothetaco.controlsuite.settings.SettingsListener;
 import com.paccothetaco.controlsuite.warp.WarpCommand;
 import com.paccothetaco.controlsuite.warp.SetWarpCommand;
 import com.paccothetaco.controlsuite.commands.GiveAllPermsCommand;
@@ -22,7 +22,6 @@ import com.paccothetaco.controlsuite.clan.ClanCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
-
     private ConfigManager configManager;
 
     @Override
