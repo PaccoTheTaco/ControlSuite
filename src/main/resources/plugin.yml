@@ -50,3 +50,7 @@ commands:
     description: Gives all current permissions to a player.
     usage: /giveallperms <player>
     permission: op
+  gm:
+    description: Changes your gamemode quickly.
+    usage: /gm <0|1|2|3|survival|creative|adventure|spectator> [player]
+    permission: op
