@@ -1,5 +1,7 @@
 package com.paccothetaco.controlsuite;
 
+import com.paccothetaco.controlsuite.clan.ChatListener;
+import com.paccothetaco.controlsuite.clan.ClanListener;
 import com.paccothetaco.controlsuite.enderchest.EnderchestCommand;
 import com.paccothetaco.controlsuite.enderchest.AddAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.enderchest.RemoveAuthorizedPlayerCommand;
@@ -16,6 +18,7 @@ import com.paccothetaco.controlsuite.warp.WarpCommand;
 import com.paccothetaco.controlsuite.warp.SetWarpCommand;
 import com.paccothetaco.controlsuite.commands.GiveAllPermsCommand;
 import com.paccothetaco.controlsuite.commands.GamemodeShort;
+import com.paccothetaco.controlsuite.clan.ClanCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
@@ -37,9 +40,13 @@ public final class Main extends JavaPlugin {
         this.getCommand("warp").setExecutor(new WarpCommand(getConfig()));
         this.getCommand("setwarp").setExecutor(new SetWarpCommand(getConfig()));
         this.getCommand("giveallperms").setExecutor(new GiveAllPermsCommand(configManager));
-        this.getCommand("gm").setExecutor(new GamemodeShort()); // Hinzugefügt
+        this.getCommand("gm").setExecutor(new GamemodeShort());
+        this.getCommand("clan").setExecutor(new ClanCommand());
         getServer().getPluginManager().registerEvents(new InvseeListener(), this);
         getServer().getPluginManager().registerEvents(new SettingsListener(configManager), this);
+        this.getCommand("clan").setExecutor(new ClanCommand());
+        getServer().getPluginManager().registerEvents(new ClanListener(this), this);
+        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
     }
 
     @Override
