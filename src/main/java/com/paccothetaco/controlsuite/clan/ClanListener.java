@@ -27,6 +27,7 @@ public class ClanListener implements Listener {
             if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
             Player player = (Player) event.getWhoClicked();
+            player.sendMessage(ChatColor.GREEN + "Clicked on item: " + clickedItem.getType());
 
             if (clickedItem.getType() == Material.EMERALD) {
                 player.sendMessage("Enter the name of your new clan:");
@@ -53,6 +54,48 @@ public class ClanListener implements Listener {
                     ClanCommand clanCommand = new ClanCommand();
                     clanCommand.openClanSettingsGUI(player, playerClan);
                 }
+            } else if (clickedItem.getType() == Material.PAPER && clickedItem.getItemMeta().getDisplayName().equals("Clan Invites")) {
+                ClanCommand clanCommand = new ClanCommand();
+                clanCommand.openInviteListGUI(player);
+            }
+        } else if (event.getView().getTitle().equals("Clan Invites")) {
+            event.setCancelled(true);
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+            Player player = (Player) event.getWhoClicked();
+            String clanName = clickedItem.getItemMeta().getDisplayName();
+            Clan selectedClan = ClanCommand.clans.stream()
+                    .filter(clan -> clan.getName().equals(clanName))
+                    .findFirst()
+                    .orElse(null);
+
+            if (selectedClan != null) {
+                ClanCommand clanCommand = new ClanCommand();
+                clanCommand.openInviteResponseGUI(player, selectedClan);
+            }
+        } else if (event.getView().getTitle().startsWith("Respond to ")) {
+            event.setCancelled(true);
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+            Player player = (Player) event.getWhoClicked();
+            String clanName = event.getView().getTitle().substring(11);
+            Clan selectedClan = ClanCommand.clans.stream()
+                    .filter(clan -> clan.getName().equals(clanName))
+                    .findFirst()
+                    .orElse(null);
+
+            if (selectedClan != null) {
+                if (clickedItem.getType() == Material.GREEN_WOOL) {
+                    selectedClan.addMember(player.getName());
+                    selectedClan.removeInvitation(player.getName());
+                    player.sendMessage(ChatColor.GREEN + "You have joined the clan " + selectedClan.getName() + ".");
+                } else if (clickedItem.getType() == Material.RED_WOOL) {
+                    selectedClan.removeInvitation(player.getName());
+                    player.sendMessage(ChatColor.GREEN + "You have declined the invitation from clan " + selectedClan.getName() + ".");
+                }
+                player.closeInventory();
             }
         } else if (event.getView().getTitle().startsWith("Settings: ")) {
             event.setCancelled(true);

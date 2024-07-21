@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
@@ -27,6 +28,8 @@ public class ClanCommand implements CommandExecutor, Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
+
+            player.sendMessage(ChatColor.GREEN + "Clan command executed.");
 
             if (args.length > 0 && args[0].equalsIgnoreCase("invite")) {
                 if (args.length == 2) {
@@ -67,7 +70,7 @@ public class ClanCommand implements CommandExecutor, Listener {
                     Clan clan = getClanByName(clanName);
                     if (clan != null && clan.getInvitations().contains(player.getName())) {
                         clan.removeInvitation(player.getName());
-                        player.sendMessage(ChatColor.GREEN + "You have declined the invitation from clan " + clan.getName() + ".");
+                        player.sendMessage(ChatColor.GREEN + "You have declined the invitation from clan " + clan.getName() +".");
                     } else {
                         player.sendMessage(ChatColor.RED + "No invitation found from clan " + clanName + ".");
                     }
@@ -75,6 +78,7 @@ public class ClanCommand implements CommandExecutor, Listener {
                     player.sendMessage(ChatColor.RED + "Usage: /clan decline <clan>");
                 }
             } else {
+                player.sendMessage(ChatColor.GREEN + "Opening clan GUI.");
                 openClanGUI(player);
             }
         } else {
@@ -100,6 +104,58 @@ public class ClanCommand implements CommandExecutor, Listener {
         invitee.spigot().sendMessage(message);
     }
 
+    public void openClanMembersGUI(Player player, Clan clan) {
+        Inventory membersGUI = Bukkit.createInventory(null, 54, "Clan: " + clan.getName());
+
+        for (int i = 0; i < clan.getMembers().size(); i++) {
+            String member = clan.getMembers().get(i);
+            ItemStack skull = getPlayerSkull(member);
+            SkullMeta meta = (SkullMeta) skull.getItemMeta();
+            meta.setDisplayName(member);
+            skull.setItemMeta(meta);
+            membersGUI.setItem(i, skull);
+        }
+
+        player.openInventory(membersGUI);
+    }
+
+    public void openInviteListGUI(Player player) {
+        Inventory inviteGUI = Bukkit.createInventory(null, 54, "Clan Invites");
+
+        ClanCommand.clans.stream()
+                .filter(clan -> clan.getInvitations().contains(player.getName()))
+                .forEach(clan -> {
+                    ItemStack inviteItem = new ItemStack(Material.PAPER);
+                    ItemMeta meta = inviteItem.getItemMeta();
+                    meta.setDisplayName(clan.getName());
+                    List<String> lore = new ArrayList<>();
+                    lore.add("Click to respond to the invite.");
+                    meta.setLore(lore);
+                    inviteItem.setItemMeta(meta);
+                    inviteGUI.addItem(inviteItem);
+                });
+
+        player.openInventory(inviteGUI);
+    }
+
+    public void openInviteResponseGUI(Player player, Clan clan) {
+        Inventory responseGUI = Bukkit.createInventory(null, 9, "Respond to " + clan.getName());
+
+        ItemStack acceptItem = new ItemStack(Material.GREEN_WOOL);
+        ItemMeta acceptMeta = acceptItem.getItemMeta();
+        acceptMeta.setDisplayName("Accept");
+        acceptItem.setItemMeta(acceptMeta);
+        responseGUI.setItem(3, acceptItem);
+
+        ItemStack declineItem = new ItemStack(Material.RED_WOOL);
+        ItemMeta declineMeta = declineItem.getItemMeta();
+        declineMeta.setDisplayName("Decline");
+        declineItem.setItemMeta(declineMeta);
+        responseGUI.setItem(5, declineItem);
+
+        player.openInventory(responseGUI);
+    }
+
     public void openClanGUI(Player player) {
         Inventory clanGUI = Bukkit.createInventory(null, 54, "Clans");
 
@@ -114,6 +170,12 @@ public class ClanCommand implements CommandExecutor, Listener {
             clanItem.setItemMeta(meta);
             clanGUI.setItem(i, clanItem);
         }
+
+        ItemStack inviteItem = new ItemStack(Material.PAPER);
+        ItemMeta inviteMeta = inviteItem.getItemMeta();
+        inviteMeta.setDisplayName("Clan Invites");
+        inviteItem.setItemMeta(inviteMeta);
+        clanGUI.setItem(45, inviteItem);
 
         Clan playerClan = getPlayerClan(player.getName());
 
@@ -132,21 +194,6 @@ public class ClanCommand implements CommandExecutor, Listener {
         }
 
         player.openInventory(clanGUI);
-    }
-
-    public void openClanMembersGUI(Player player, Clan clan) {
-        Inventory membersGUI = Bukkit.createInventory(null, 54, "Clan: " + clan.getName());
-
-        for (int i = 0; i < clan.getMembers().size(); i++) {
-            String member = clan.getMembers().get(i);
-            ItemStack skull = getPlayerSkull(member);
-            SkullMeta meta = (SkullMeta) skull.getItemMeta();
-            meta.setDisplayName(member);
-            skull.setItemMeta(meta);
-            membersGUI.setItem(i, skull);
-        }
-
-        player.openInventory(membersGUI);
     }
 
     private ItemStack getPlayerSkull(String playerName) {
@@ -243,5 +290,31 @@ public class ClanCommand implements CommandExecutor, Listener {
         } else {
             player.sendMessage("Member '" + memberName + "' is not in the clan.");
         }
+    }
+
+    public static void loadClans(FileConfiguration config) {
+        clans.clear();
+        if (config.contains("clans")) {
+            config.getConfigurationSection("clans").getKeys(false).forEach(clanName -> {
+                String owner = config.getString("clans." + clanName + ".owner");
+                List<String> members = config.getStringList("clans." + clanName + ".members");
+                List<String> invitations = config.getStringList("clans." + clanName + ".invitations");
+
+                Clan clan = new Clan(clanName, owner);
+                clan.getMembers().addAll(members);
+                clan.getInvitations().addAll(invitations);
+                clans.add(clan);
+            });
+        }
+    }
+
+    public static void saveClans(FileConfiguration config) {
+        config.set("clans", null);
+        clans.forEach(clan -> {
+            String path = "clans." + clan.getName();
+            config.set(path + ".owner", clan.getOwner());
+            config.set(path + ".members", new ArrayList<>(clan.getMembers()));
+            config.set(path + ".invitations", new ArrayList<>(clan.getInvitations()));
+        });
     }
 }
