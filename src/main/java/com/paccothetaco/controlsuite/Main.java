@@ -2,7 +2,6 @@ package com.paccothetaco.controlsuite;
 
 import com.paccothetaco.controlsuite.Invsee.InvseeListener;
 import com.paccothetaco.controlsuite.clan.ChatListener;
-import com.paccothetaco.controlsuite.clan.ClanCommand;
 import com.paccothetaco.controlsuite.clan.ClanListener;
 import com.paccothetaco.controlsuite.enderchest.EnderchestCommand;
 import com.paccothetaco.controlsuite.enderchest.AddAuthorizedPlayerCommand;
@@ -19,23 +18,15 @@ import com.paccothetaco.controlsuite.warp.WarpCommand;
 import com.paccothetaco.controlsuite.warp.SetWarpCommand;
 import com.paccothetaco.controlsuite.commands.GiveAllPermsCommand;
 import com.paccothetaco.controlsuite.commands.GamemodeShort;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.paccothetaco.controlsuite.clan.ClanCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.io.IOException;
 
 public final class Main extends JavaPlugin {
     private ConfigManager configManager;
-    private File clansFile;
-    private FileConfiguration clansConfig;
 
     @Override
     public void onEnable() {
         this.configManager = new ConfigManager(this);
-        createClansConfig();
-
         this.getCommand("invsee").setExecutor(new InvseeCommand());
         this.getCommand("ec").setExecutor(new EnderchestCommand(configManager));
         this.getCommand("settings").setExecutor(new SettingsCommand());
@@ -50,39 +41,18 @@ public final class Main extends JavaPlugin {
         this.getCommand("giveallperms").setExecutor(new GiveAllPermsCommand(configManager));
         this.getCommand("gm").setExecutor(new GamemodeShort());
         this.getCommand("clan").setExecutor(new ClanCommand());
-
         getServer().getPluginManager().registerEvents(new InvseeListener(), this);
         getServer().getPluginManager().registerEvents(new SettingsListener(configManager), this);
+        this.getCommand("clan").setExecutor(new ClanCommand());
         getServer().getPluginManager().registerEvents(new ClanListener(this), this);
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
-
-        ClanCommand.loadClans(clansConfig);
     }
 
     @Override
     public void onDisable() {
-        ClanCommand.saveClans(clansConfig);
-        saveClansConfig();
     }
 
     public ConfigManager getConfigManager() {
         return configManager;
-    }
-
-    private void createClansConfig() {
-        clansFile = new File(getDataFolder(), "clans.yml");
-        if (!clansFile.exists()) {
-            clansFile.getParentFile().mkdirs();
-            saveResource("clans.yml", false);
-        }
-        clansConfig = YamlConfiguration.loadConfiguration(clansFile);
-    }
-
-    private void saveClansConfig() {
-        try {
-            clansConfig.save(clansFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

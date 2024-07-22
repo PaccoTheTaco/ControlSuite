@@ -21,49 +21,34 @@ public class ClanListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getView().getTitle().equals("Clans")) {
+        String title = event.getView().getTitle();
+        Player player = (Player) event.getWhoClicked();
+
+        if (title.equals("Clans") || title.startsWith("Clan: ") || title.startsWith("Manage Members: ") || title.startsWith("Invite Player: ") || title.startsWith("Settings: ")) {
             event.setCancelled(true);
+
             ItemStack clickedItem = event.getCurrentItem();
             if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
-            Player player = (Player) event.getWhoClicked();
-            player.sendMessage(ChatColor.GREEN + "Clicked on item: " + clickedItem.getType());
-
-            if (clickedItem.getType() == Material.EMERALD) {
-                player.sendMessage("Enter the name of your new clan:");
-                player.closeInventory();
-                player.setMetadata("creatingClan", new FixedMetadataValue(plugin, true));
-            } else if (clickedItem.getType() == Material.CYAN_BANNER) {
-                String clanName = clickedItem.getItemMeta().getDisplayName();
-                Clan selectedClan = ClanCommand.clans.stream()
-                        .filter(clan -> clan.getName().equals(clanName))
-                        .findFirst()
-                        .orElse(null);
-
-                if (selectedClan != null) {
-                    ClanCommand clanCommand = new ClanCommand();
-                    clanCommand.openClanMembersGUI(player, selectedClan);
-                }
-            } else if (clickedItem.getType() == Material.CRAFTING_TABLE) {
-                Clan playerClan = ClanCommand.clans.stream()
-                        .filter(clan -> clan.getOwner().equals(player.getName()))
-                        .findFirst()
-                        .orElse(null);
-
-                if (playerClan != null) {
-                    ClanCommand clanCommand = new ClanCommand();
-                    clanCommand.openClanSettingsGUI(player, playerClan);
-                }
-            } else if (clickedItem.getType() == Material.PAPER && clickedItem.getItemMeta().getDisplayName().equals("Clan Invites")) {
-                ClanCommand clanCommand = new ClanCommand();
-                clanCommand.openInviteListGUI(player);
+            if (title.equals("Clans")) {
+                handleClansInventoryClick(player, clickedItem);
+            } else if (title.startsWith("Settings: ")) {
+                handleSettingsInventoryClick(player, clickedItem);
+            } else if (title.startsWith("Manage Members: ")) {
+                handleManageMembersInventoryClick(player, clickedItem);
+            } else if (title.startsWith("Invite Player: ")) {
+                handleInvitePlayerInventoryClick(player, clickedItem);
+            } else if (title.startsWith("Clan: ")) {
             }
-        } else if (event.getView().getTitle().equals("Clan Invites")) {
-            event.setCancelled(true);
-            ItemStack clickedItem = event.getCurrentItem();
-            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+        }
+    }
 
-            Player player = (Player) event.getWhoClicked();
+    private void handleClansInventoryClick(Player player, ItemStack clickedItem) {
+        if (clickedItem.getType() == Material.EMERALD) {
+            player.sendMessage("Enter the name of your new clan:");
+            player.closeInventory();
+            player.setMetadata("creatingClan", new FixedMetadataValue(plugin, true));
+        } else if (clickedItem.getType() == Material.CYAN_BANNER) {
             String clanName = clickedItem.getItemMeta().getDisplayName();
             Clan selectedClan = ClanCommand.clans.stream()
                     .filter(clan -> clan.getName().equals(clanName))
@@ -72,37 +57,9 @@ public class ClanListener implements Listener {
 
             if (selectedClan != null) {
                 ClanCommand clanCommand = new ClanCommand();
-                clanCommand.openInviteResponseGUI(player, selectedClan);
+                clanCommand.openClanMembersGUI(player, selectedClan);
             }
-        } else if (event.getView().getTitle().startsWith("Respond to ")) {
-            event.setCancelled(true);
-            ItemStack clickedItem = event.getCurrentItem();
-            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
-
-            Player player = (Player) event.getWhoClicked();
-            String clanName = event.getView().getTitle().substring(11);
-            Clan selectedClan = ClanCommand.clans.stream()
-                    .filter(clan -> clan.getName().equals(clanName))
-                    .findFirst()
-                    .orElse(null);
-
-            if (selectedClan != null) {
-                if (clickedItem.getType() == Material.GREEN_WOOL) {
-                    selectedClan.addMember(player.getName());
-                    selectedClan.removeInvitation(player.getName());
-                    player.sendMessage(ChatColor.GREEN + "You have joined the clan " + selectedClan.getName() + ".");
-                } else if (clickedItem.getType() == Material.RED_WOOL) {
-                    selectedClan.removeInvitation(player.getName());
-                    player.sendMessage(ChatColor.GREEN + "You have declined the invitation from clan " + selectedClan.getName() + ".");
-                }
-                player.closeInventory();
-            }
-        } else if (event.getView().getTitle().startsWith("Settings: ")) {
-            event.setCancelled(true);
-            ItemStack clickedItem = event.getCurrentItem();
-            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
-
-            Player player = (Player) event.getWhoClicked();
+        } else if (clickedItem.getType() == Material.CRAFTING_TABLE) {
             Clan playerClan = ClanCommand.clans.stream()
                     .filter(clan -> clan.getOwner().equals(player.getName()))
                     .findFirst()
@@ -110,57 +67,63 @@ public class ClanListener implements Listener {
 
             if (playerClan != null) {
                 ClanCommand clanCommand = new ClanCommand();
-                if (clickedItem.getType() == Material.BARRIER) {
-                    clanCommand.disbandClan(player, playerClan);
-                    player.closeInventory();
-                } else if (clickedItem.getType() == Material.PAPER) {
-                    clanCommand.openManageMembersGUI(player, playerClan);
-                } else if (clickedItem.getType() == Material.OAK_SIGN) {
-                    clanCommand.openInvitePlayerGUI(player, playerClan);
-                }
+                clanCommand.openClanSettingsGUI(player, playerClan);
             }
-        } else if (event.getView().getTitle().startsWith("Manage Members: ")) {
-            event.setCancelled(true);
-            ItemStack clickedItem = event.getCurrentItem();
-            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+        }
+    }
 
-            Player player = (Player) event.getWhoClicked();
-            String memberName = clickedItem.getItemMeta().getDisplayName();
-            Clan playerClan = ClanCommand.clans.stream()
-                    .filter(clan -> clan.getOwner().equals(player.getName()))
-                    .findFirst()
-                    .orElse(null);
+    private void handleSettingsInventoryClick(Player player, ItemStack clickedItem) {
+        Clan playerClan = ClanCommand.clans.stream()
+                .filter(clan -> clan.getOwner().equals(player.getName()))
+                .findFirst()
+                .orElse(null);
 
-            if (playerClan != null && clickedItem.getType() == Material.PLAYER_HEAD) {
-                if (playerClan.getOwner().equals(memberName)) {
-                    player.sendMessage("You cannot remove yourself from the clan.");
-                } else {
-                    ClanCommand clanCommand = new ClanCommand();
-                    clanCommand.removeMember(player, playerClan, memberName);
-                    player.closeInventory();
-                    clanCommand.openManageMembersGUI(player, playerClan);
-                }
-            }
-        } else if (event.getView().getTitle().startsWith("Invite Player: ")) {
-            event.setCancelled(true);
-            ItemStack clickedItem = event.getCurrentItem();
-            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
-
-            Player player = (Player) event.getWhoClicked();
-            String inviteeName = clickedItem.getItemMeta().getDisplayName();
-            Player invitee = Bukkit.getPlayer(inviteeName);
-            Clan playerClan = ClanCommand.clans.stream()
-                    .filter(clan -> clan.getOwner().equals(player.getName()))
-                    .findFirst()
-                    .orElse(null);
-
-            if (playerClan != null && invitee != null && invitee.isOnline()) {
-                playerClan.addInvitation(inviteeName);
-                invitee.sendMessage(ChatColor.GREEN + "You have been invited to the clan " + playerClan.getName() + ".");
-                invitee.sendMessage(ChatColor.GREEN + "Type /clan accept " + playerClan.getName() + " to join or /clan decline " + playerClan.getName() + " to decline.");
-                player.sendMessage(ChatColor.GREEN + "Invitation sent to " + inviteeName);
+        if (playerClan != null) {
+            ClanCommand clanCommand = new ClanCommand();
+            if (clickedItem.getType() == Material.BARRIER) {
+                clanCommand.disbandClan(player, playerClan);
                 player.closeInventory();
+            } else if (clickedItem.getType() == Material.PAPER) {
+                clanCommand.openManageMembersGUI(player, playerClan);
+            } else if (clickedItem.getType() == Material.OAK_SIGN) {
+                clanCommand.openInvitePlayerGUI(player, playerClan);
             }
+        }
+    }
+
+    private void handleManageMembersInventoryClick(Player player, ItemStack clickedItem) {
+        String memberName = clickedItem.getItemMeta().getDisplayName();
+        Clan playerClan = ClanCommand.clans.stream()
+                .filter(clan -> clan.getOwner().equals(player.getName()))
+                .findFirst()
+                .orElse(null);
+
+        if (playerClan != null && clickedItem.getType() == Material.PLAYER_HEAD) {
+            if (playerClan.getOwner().equals(memberName)) {
+                player.sendMessage("You cannot remove yourself from the clan.");
+            } else {
+                ClanCommand clanCommand = new ClanCommand();
+                clanCommand.removeMember(player, playerClan, memberName);
+                player.closeInventory();
+                clanCommand.openManageMembersGUI(player, playerClan);
+            }
+        }
+    }
+
+    private void handleInvitePlayerInventoryClick(Player player, ItemStack clickedItem) {
+        String inviteeName = clickedItem.getItemMeta().getDisplayName();
+        Player invitee = Bukkit.getPlayer(inviteeName);
+        Clan playerClan = ClanCommand.clans.stream()
+                .filter(clan -> clan.getOwner().equals(player.getName()))
+                .findFirst()
+                .orElse(null);
+
+        if (playerClan != null && invitee != null && invitee.isOnline()) {
+            playerClan.addInvitation(inviteeName);
+            invitee.sendMessage(ChatColor.GREEN + "You have been invited to the clan " + playerClan.getName() + ".");
+            invitee.sendMessage(ChatColor.GREEN + "Type /clan accept " + playerClan.getName() + " to join or /clan decline " + playerClan.getName() + " to decline.");
+            player.sendMessage(ChatColor.GREEN + "Invitation sent to " + inviteeName);
+            player.closeInventory();
         }
     }
 }
