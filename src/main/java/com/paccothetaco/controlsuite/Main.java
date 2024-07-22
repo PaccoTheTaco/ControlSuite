@@ -17,16 +17,25 @@ import com.paccothetaco.controlsuite.warp.WarpCommand;
 import com.paccothetaco.controlsuite.warp.SetWarpCommand;
 import com.paccothetaco.controlsuite.commands.GiveAllPermsCommand;
 import com.paccothetaco.controlsuite.commands.GamemodeShort;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
     private ConfigManager configManager;
     private ClanManager clanManager;
+    private ClanCommand clanCommand;
+    private ClanListener clanListener;
+    private ChatListener chatListener;
 
     @Override
     public void onEnable() {
         this.configManager = new ConfigManager(this);
         this.clanManager = new ClanManager(this);
+        this.clanCommand = new ClanCommand();
+        this.clanListener = new ClanListener(this);
+        this.chatListener = new ChatListener(this);
 
         this.clanManager.loadClans();
 
@@ -43,17 +52,19 @@ public final class Main extends JavaPlugin {
         this.getCommand("setwarp").setExecutor(new SetWarpCommand(getConfig()));
         this.getCommand("giveallperms").setExecutor(new GiveAllPermsCommand(configManager));
         this.getCommand("gm").setExecutor(new GamemodeShort());
-        this.getCommand("clan").setExecutor(new ClanCommand());
+
         getServer().getPluginManager().registerEvents(new InvseeListener(), this);
-        getServer().getPluginManager().registerEvents(new SettingsListener(configManager), this);
-        this.getCommand("clan").setExecutor(new ClanCommand());
-        getServer().getPluginManager().registerEvents(new ClanListener(this), this);
-        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+        getServer().getPluginManager().registerEvents(new SettingsListener(configManager, this), this);
+
+        if (configManager.isClanSystemEnabled()) {
+            registerClanFeatures();
+        }
     }
 
     @Override
     public void onDisable() {
         this.clanManager.saveClans();
+        unregisterClanFeatures();
     }
 
     public ConfigManager getConfigManager() {
@@ -62,5 +73,23 @@ public final class Main extends JavaPlugin {
 
     public ClanManager getClanManager() {
         return clanManager;
+    }
+
+    public void registerClanFeatures() {
+        PluginCommand clanCommand = getCommand("clan");
+        if (clanCommand != null) {
+            clanCommand.setExecutor(this.clanCommand);
+        }
+        getServer().getPluginManager().registerEvents(this.clanListener, this);
+        getServer().getPluginManager().registerEvents(this.chatListener, this);
+    }
+
+    public void unregisterClanFeatures() {
+        PluginCommand clanCommand = getCommand("clan");
+        if (clanCommand != null) {
+            clanCommand.setExecutor(null);
+        }
+        AsyncPlayerChatEvent.getHandlerList().unregister(this.chatListener);
+        InventoryClickEvent.getHandlerList().unregister(this.clanListener);
     }
 }

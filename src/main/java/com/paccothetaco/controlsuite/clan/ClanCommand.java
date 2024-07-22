@@ -15,6 +15,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import com.paccothetaco.controlsuite.Main;
+import com.paccothetaco.controlsuite.settings.ConfigManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,61 +27,70 @@ public class ClanCommand implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("This command can only be run by a player.");
+            return true;
+        }
 
-            if (args.length > 0 && args[0].equalsIgnoreCase("invite")) {
-                if (args.length == 2) {
-                    String inviteeName = args[1];
-                    Player invitee = Bukkit.getPlayer(inviteeName);
-                    if (invitee != null && invitee.isOnline()) {
-                        Clan playerClan = getPlayerClan(player.getName());
-                        if (playerClan != null) {
-                            playerClan.addInvitation(inviteeName);
-                            sendInvitationMessage(invitee, playerClan);
-                            player.sendMessage(ChatColor.GREEN + "Invitation sent to " + inviteeName);
-                        } else {
-                            player.sendMessage(ChatColor.RED + "You are not in a clan.");
-                        }
+        Player player = (Player) sender;
+        Main plugin = (Main) Bukkit.getPluginManager().getPlugin("ControlSuite");
+        ConfigManager configManager = plugin.getConfigManager();
+
+        if (!configManager.isClanSystemEnabled()) {
+            player.sendMessage(ChatColor.RED + "You are not authorized to use this command.");
+            return true;
+        }
+
+        if (args.length > 0 && args[0].equalsIgnoreCase("invite")) {
+            if (args.length == 2) {
+                String inviteeName = args[1];
+                Player invitee = Bukkit.getPlayer(inviteeName);
+                if (invitee != null && invitee.isOnline()) {
+                    Clan playerClan = getPlayerClan(player.getName());
+                    if (playerClan != null) {
+                        playerClan.addInvitation(inviteeName);
+                        sendInvitationMessage(invitee, playerClan);
+                        player.sendMessage(ChatColor.GREEN + "Invitation sent to " + inviteeName);
                     } else {
-                        player.sendMessage(ChatColor.RED + "Player not found or not online.");
+                        player.sendMessage(ChatColor.RED + "You are not in a clan.");
                     }
                 } else {
-                    player.sendMessage(ChatColor.RED + "Usage: /clan invite <player>");
-                }
-            } else if (args.length > 0 && args[0].equalsIgnoreCase("accept")) {
-                if (args.length == 2) {
-                    String clanName = args[1];
-                    Clan clan = getClanByName(clanName);
-                    if (clan != null && clan.getInvitations().contains(player.getName())) {
-                        clan.addMember(player.getName());
-                        clan.removeInvitation(player.getName());
-                        player.sendMessage(ChatColor.GREEN + "You have joined the clan " + clan.getName() + ".");
-                    } else {
-                        player.sendMessage(ChatColor.RED + "No invitation found from clan " + clanName + ".");
-                    }
-                } else {
-                    player.sendMessage(ChatColor.RED + "Usage: /clan accept <clan>");
-                }
-            } else if (args.length > 0 && args[0].equalsIgnoreCase("decline")) {
-                if (args.length == 2) {
-                    String clanName = args[1];
-                    Clan clan = getClanByName(clanName);
-                    if (clan != null && clan.getInvitations().contains(player.getName())) {
-                        clan.removeInvitation(player.getName());
-                        player.sendMessage(ChatColor.GREEN + "You have declined the invitation from clan " + clan.getName() +".");
-                    } else {
-                        player.sendMessage(ChatColor.RED + "No invitation found from clan " + clanName +".");
-                    }
-                } else {
-                    player.sendMessage(ChatColor.RED + "Usage: /clan decline <clan>");
+                    player.sendMessage(ChatColor.RED + "Player not found or not online.");
                 }
             } else {
-                openClanGUI(player);
+                player.sendMessage(ChatColor.RED + "Usage: /clan invite <player>");
+            }
+        } else if (args.length > 0 && args[0].equalsIgnoreCase("accept")) {
+            if (args.length == 2) {
+                String clanName = args[1];
+                Clan clan = getClanByName(clanName);
+                if (clan != null && clan.getInvitations().contains(player.getName())) {
+                    clan.addMember(player.getName());
+                    clan.removeInvitation(player.getName());
+                    player.sendMessage(ChatColor.GREEN + "You have joined the clan " + clan.getName() + ".");
+                } else {
+                    player.sendMessage(ChatColor.RED + "No invitation found from clan " + clanName + ".");
+                }
+            } else {
+                player.sendMessage(ChatColor.RED + "Usage: /clan accept <clan>");
+            }
+        } else if (args.length > 0 && args[0].equalsIgnoreCase("decline")) {
+            if (args.length == 2) {
+                String clanName = args[1];
+                Clan clan = getClanByName(clanName);
+                if (clan != null && clan.getInvitations().contains(player.getName())) {
+                    clan.removeInvitation(player.getName());
+                    player.sendMessage(ChatColor.GREEN + "You have declined the invitation from clan " + clan.getName() +".");
+                } else {
+                    player.sendMessage(ChatColor.RED + "No invitation found from clan " + clanName +".");
+                }
+            } else {
+                player.sendMessage(ChatColor.RED + "Usage: /clan decline <clan>");
             }
         } else {
-            sender.sendMessage("This command can only be run by a player.");
+            openClanGUI(player);
         }
+
         return true;
     }
 

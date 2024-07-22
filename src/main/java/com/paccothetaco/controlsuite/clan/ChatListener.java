@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import com.paccothetaco.controlsuite.Main;
+import com.paccothetaco.controlsuite.settings.ConfigManager;
 
 public class ChatListener implements Listener {
 
@@ -17,6 +18,12 @@ public class ChatListener implements Listener {
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
+        ConfigManager configManager = plugin.getConfigManager();
+
+        if (!configManager.isClanSystemEnabled()) {
+            return;
+        }
+
         if (player.hasMetadata("creatingClan")) {
             event.setCancelled(true);
             String clanName = event.getMessage();

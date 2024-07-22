@@ -35,6 +35,10 @@ public class ConfigManager {
         return config.getString(setting, "noone");
     }
 
+    public boolean isClanSystemEnabled() {
+        return config.getBoolean("clan-system-enabled", true);
+    }
+
     public void addAuthorizedPlayer(UUID playerUUID) {
         List<String> authorizedPlayers = config.getStringList("authorizedPlayers");
         authorizedPlayers.add(playerUUID.toString());

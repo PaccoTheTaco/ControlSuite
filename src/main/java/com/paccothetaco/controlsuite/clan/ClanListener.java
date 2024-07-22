@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import com.paccothetaco.controlsuite.Main;
 import org.bukkit.ChatColor;
+import com.paccothetaco.controlsuite.settings.ConfigManager;
 
 public class ClanListener implements Listener {
 
@@ -23,6 +24,11 @@ public class ClanListener implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         String title = event.getView().getTitle();
         Player player = (Player) event.getWhoClicked();
+        ConfigManager configManager = plugin.getConfigManager();
+
+        if (!configManager.isClanSystemEnabled()) {
+            return;
+        }
 
         if (title.equals("Clans") || title.startsWith("Clan: ") || title.startsWith("Manage Members: ") || title.startsWith("Invite Player: ") || title.startsWith("Settings: ")) {
             event.setCancelled(true);

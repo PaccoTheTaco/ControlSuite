@@ -1,5 +1,6 @@
 package com.paccothetaco.controlsuite.settings;
 
+import com.paccothetaco.controlsuite.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -11,9 +12,11 @@ import org.bukkit.entity.Player;
 public class SettingsListener implements Listener {
 
     private final ConfigManager configManager;
+    private final Main plugin;
 
-    public SettingsListener(ConfigManager configManager) {
+    public SettingsListener(ConfigManager configManager, Main plugin) {
         this.configManager = configManager;
+        this.plugin = plugin;
     }
 
     @EventHandler
@@ -29,6 +32,8 @@ public class SettingsListener implements Listener {
                 SettingsGUI.openEnderchestSettingsMenu((Player) event.getWhoClicked());
             } else if (clickedItem.getType() == Material.BLUE_BED) {
                 SettingsGUI.openHomeSettingsMenu((Player) event.getWhoClicked());
+            } else if (clickedItem.getType() == Material.CYAN_BANNER) {
+                SettingsGUI.openClanSettingsMenu((Player) event.getWhoClicked());
             }
         } else if (title.equals(ChatColor.GOLD + "Use /enderchest")) {
             event.setCancelled(true);
@@ -70,6 +75,29 @@ public class SettingsListener implements Listener {
 
             configManager.saveSetting("home", settingValue);
             event.getWhoClicked().closeInventory();
+        } else if (title.equals(ChatColor.GOLD + "Clans")) {
+            event.setCancelled(true);
+
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+            boolean enableClans = false;
+            if (clickedItem.getType() == Material.RED_WOOL) {
+                event.getWhoClicked().sendMessage(ChatColor.RED + "Clans system deactivated");
+                enableClans = false;
+            } else if (clickedItem.getType() == Material.GREEN_WOOL) {
+                event.getWhoClicked().sendMessage(ChatColor.GREEN + "Clans system activated");
+                enableClans = true;
+            }
+
+            configManager.saveSetting("clan-system-enabled", String.valueOf(enableClans));
+            event.getWhoClicked().closeInventory();
+
+            if (enableClans) {
+                plugin.registerClanFeatures();
+            } else {
+                plugin.unregisterClanFeatures();
+            }
         }
     }
 }

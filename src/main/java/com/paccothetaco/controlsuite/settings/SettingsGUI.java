@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class SettingsGUI {
 
     public static void openSettingsMenu(Player player) {
-        Inventory settingsMenu = Bukkit.createInventory(null, 18, ChatColor.DARK_GREEN + "Settings");
+        Inventory settingsMenu = Bukkit.createInventory(null, 27, ChatColor.DARK_GREEN + "Settings");
 
         ItemStack enderchestItem = new ItemStack(Material.ENDER_CHEST);
         ItemMeta enderchestMeta = enderchestItem.getItemMeta();
@@ -24,6 +24,12 @@ public class SettingsGUI {
         homeMeta.setDisplayName(ChatColor.GOLD + "Use /home");
         homeItem.setItemMeta(homeMeta);
         settingsMenu.setItem(1, homeItem);
+
+        ItemStack clanItem = new ItemStack(Material.CYAN_BANNER);
+        ItemMeta clanMeta = clanItem.getItemMeta();
+        clanMeta.setDisplayName(ChatColor.GOLD + "Clans");
+        clanItem.setItemMeta(clanMeta);
+        settingsMenu.setItem(2, clanItem);
 
         player.openInventory(settingsMenu);
     }
@@ -76,5 +82,24 @@ public class SettingsGUI {
         homeSettingsMenu.setItem(6, noOneItem);
 
         player.openInventory(homeSettingsMenu);
+    }
+
+    public static void openClanSettingsMenu(Player player) {
+        Inventory clanSettingsMenu = Bukkit.createInventory(null, 9, ChatColor.GOLD + "Clans");
+
+        ItemStack activateItem = new ItemStack(Material.GREEN_WOOL);
+        ItemMeta activateMeta = activateItem.getItemMeta();
+        activateMeta.setDisplayName(ChatColor.GREEN + "Activate");
+        activateItem.setItemMeta(activateMeta);
+
+        ItemStack deactivateItem = new ItemStack(Material.RED_WOOL);
+        ItemMeta deactivateMeta = deactivateItem.getItemMeta();
+        deactivateMeta.setDisplayName(ChatColor.RED + "Deactivate");
+        deactivateItem.setItemMeta(deactivateMeta);
+
+        clanSettingsMenu.setItem(3, activateItem);
+        clanSettingsMenu.setItem(5, deactivateItem);
+
+        player.openInventory(clanSettingsMenu);
     }
 }
