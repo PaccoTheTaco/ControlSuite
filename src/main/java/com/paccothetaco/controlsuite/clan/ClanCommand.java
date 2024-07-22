@@ -67,9 +67,9 @@ public class ClanCommand implements CommandExecutor, Listener {
                     Clan clan = getClanByName(clanName);
                     if (clan != null && clan.getInvitations().contains(player.getName())) {
                         clan.removeInvitation(player.getName());
-                        player.sendMessage(ChatColor.GREEN + "You have declined the invitation from clan " + clan.getName() + ".");
+                        player.sendMessage(ChatColor.GREEN + "You have declined the invitation from clan " + clan.getName() +".");
                     } else {
-                        player.sendMessage(ChatColor.RED + "No invitation found from clan " + clanName + ".");
+                        player.sendMessage(ChatColor.RED + "No invitation found from clan " + clanName +".");
                     }
                 } else {
                     player.sendMessage(ChatColor.RED + "Usage: /clan decline <clan>");
@@ -109,7 +109,7 @@ public class ClanCommand implements CommandExecutor, Listener {
             ItemMeta meta = clanItem.getItemMeta();
             meta.setDisplayName(clan.getName());
             List<String> lore = new ArrayList<>();
-            lore.add("Owner: " + clan.getOwner());
+            lore.add(ChatColor.RED + "Owner: " + ChatColor.WHITE + clan.getOwner());
             meta.setLore(lore);
             clanItem.setItemMeta(meta);
             clanGUI.setItem(i, clanItem);

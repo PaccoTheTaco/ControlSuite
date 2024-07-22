@@ -14,7 +14,9 @@ public class Clan {
         this.owner = owner;
         this.members = new ArrayList<>();
         this.invitations = new ArrayList<>();
-        this.members.add(owner);
+        if (!members.contains(owner)) {
+            this.members.add(owner);
+        }
     }
 
     public String getName() {

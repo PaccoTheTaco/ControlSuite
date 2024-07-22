@@ -1,8 +1,7 @@
 package com.paccothetaco.controlsuite;
 
 import com.paccothetaco.controlsuite.Invsee.InvseeListener;
-import com.paccothetaco.controlsuite.clan.ChatListener;
-import com.paccothetaco.controlsuite.clan.ClanListener;
+import com.paccothetaco.controlsuite.clan.*;
 import com.paccothetaco.controlsuite.enderchest.EnderchestCommand;
 import com.paccothetaco.controlsuite.enderchest.AddAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.enderchest.RemoveAuthorizedPlayerCommand;
@@ -18,15 +17,19 @@ import com.paccothetaco.controlsuite.warp.WarpCommand;
 import com.paccothetaco.controlsuite.warp.SetWarpCommand;
 import com.paccothetaco.controlsuite.commands.GiveAllPermsCommand;
 import com.paccothetaco.controlsuite.commands.GamemodeShort;
-import com.paccothetaco.controlsuite.clan.ClanCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
     private ConfigManager configManager;
+    private ClanManager clanManager;
 
     @Override
     public void onEnable() {
         this.configManager = new ConfigManager(this);
+        this.clanManager = new ClanManager(this);
+
+        this.clanManager.loadClans();
+
         this.getCommand("invsee").setExecutor(new InvseeCommand());
         this.getCommand("ec").setExecutor(new EnderchestCommand(configManager));
         this.getCommand("settings").setExecutor(new SettingsCommand());
@@ -50,9 +53,14 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        this.clanManager.saveClans();
     }
 
     public ConfigManager getConfigManager() {
         return configManager;
+    }
+
+    public ClanManager getClanManager() {
+        return clanManager;
     }
 }
