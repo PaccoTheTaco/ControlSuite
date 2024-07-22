@@ -31,6 +31,12 @@ public class SettingsGUI {
         clanItem.setItemMeta(clanMeta);
         settingsMenu.setItem(2, clanItem);
 
+        ItemStack flyItem = new ItemStack(Material.FEATHER);
+        ItemMeta flyMeta = flyItem.getItemMeta();
+        flyMeta.setDisplayName(ChatColor.GOLD + "Use /fly");
+        flyItem.setItemMeta(flyMeta);
+        settingsMenu.setItem(3, flyItem);
+
         player.openInventory(settingsMenu);
     }
 
@@ -101,5 +107,30 @@ public class SettingsGUI {
         clanSettingsMenu.setItem(5, deactivateItem);
 
         player.openInventory(clanSettingsMenu);
+    }
+
+    public static void openFlySettingsMenu(Player player) {
+        Inventory flySettingsMenu = Bukkit.createInventory(null, 9, ChatColor.GOLD + "Use /fly");
+
+        ItemStack everyoneItem = new ItemStack(Material.GREEN_WOOL);
+        ItemMeta everyoneMeta = everyoneItem.getItemMeta();
+        everyoneMeta.setDisplayName(ChatColor.GREEN + "Everyone");
+        everyoneItem.setItemMeta(everyoneMeta);
+
+        ItemStack specificPlayersItem = new ItemStack(Material.YELLOW_WOOL);
+        ItemMeta specificPlayersMeta = specificPlayersItem.getItemMeta();
+        specificPlayersMeta.setDisplayName(ChatColor.YELLOW + "Specific Players");
+        specificPlayersItem.setItemMeta(specificPlayersMeta);
+
+        ItemStack noOneItem = new ItemStack(Material.RED_WOOL);
+        ItemMeta noOneMeta = noOneItem.getItemMeta();
+        noOneMeta.setDisplayName(ChatColor.RED + "No One");
+        noOneItem.setItemMeta(noOneMeta);
+
+        flySettingsMenu.setItem(2, everyoneItem);
+        flySettingsMenu.setItem(4, specificPlayersItem);
+        flySettingsMenu.setItem(6, noOneItem);
+
+        player.openInventory(flySettingsMenu);
     }
 }

@@ -10,18 +10,18 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class GiveAllPermsCommand implements CommandExecutor {
+public class RemoveFlyAuthorizedPlayerCommand implements CommandExecutor {
 
     private final ConfigManager configManager;
 
-    public GiveAllPermsCommand(ConfigManager configManager) {
+    public RemoveFlyAuthorizedPlayerCommand(ConfigManager configManager) {
         this.configManager = configManager;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length != 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: /giveallperms <player>");
+            sender.sendMessage(ChatColor.RED + "Usage: /removefly <player>");
             return true;
         }
 
@@ -32,10 +32,8 @@ public class GiveAllPermsCommand implements CommandExecutor {
         }
 
         UUID playerUUID = target.getUniqueId();
-        configManager.addAuthorizedPlayer(playerUUID);
-        configManager.addHomeAuthorizedPlayer(playerUUID);
-        configManager.addFlyAuthorizedPlayer(playerUUID);
-        sender.sendMessage(ChatColor.GREEN + "Player " + target.getName() + " has been given all permissions.");
+        configManager.removeFlyAuthorizedPlayer(playerUUID);
+        sender.sendMessage(ChatColor.GREEN + "Player " + target.getName() + " is no longer authorized to use /fly.");
         return true;
     }
 }

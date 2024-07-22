@@ -57,3 +57,12 @@ commands:
   clan:
     description: Opens the Clan GUI.
     usage: /<command>
+  fly:
+    description: "Toggles fly mode on or off"
+    usage: "/fly"
+  addfly:
+    description: "Adds a player to the list of those authorized to use /fly"
+    usage: "/addfly <player>"
+  removefly:
+    description: "Removes a player from the list of those authorized to use /fly"
+    usage: "/removefly <player>"

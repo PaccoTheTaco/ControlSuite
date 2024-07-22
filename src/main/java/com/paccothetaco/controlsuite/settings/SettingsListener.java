@@ -34,6 +34,8 @@ public class SettingsListener implements Listener {
                 SettingsGUI.openHomeSettingsMenu((Player) event.getWhoClicked());
             } else if (clickedItem.getType() == Material.CYAN_BANNER) {
                 SettingsGUI.openClanSettingsMenu((Player) event.getWhoClicked());
+            } else if (clickedItem.getType() == Material.FEATHER) {
+                SettingsGUI.openFlySettingsMenu((Player) event.getWhoClicked());
             }
         } else if (title.equals(ChatColor.GOLD + "Use /enderchest")) {
             event.setCancelled(true);
@@ -98,6 +100,26 @@ public class SettingsListener implements Listener {
             } else {
                 plugin.unregisterClanFeatures();
             }
+        } else if (title.equals(ChatColor.GOLD + "Use /fly")) {
+            event.setCancelled(true);
+
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+            String settingValue = "noone";
+            if (clickedItem.getType() == Material.RED_WOOL) {
+                event.getWhoClicked().sendMessage(ChatColor.RED + "No one can use /fly");
+                settingValue = "noone";
+            } else if (clickedItem.getType() == Material.GREEN_WOOL) {
+                event.getWhoClicked().sendMessage(ChatColor.GREEN + "Everyone can use /fly");
+                settingValue = "everyone";
+            } else if (clickedItem.getType() == Material.YELLOW_WOOL) {
+                event.getWhoClicked().sendMessage(ChatColor.YELLOW + "Specific players can use /fly");
+                settingValue = "specific";
+            }
+
+            configManager.saveSetting("fly", settingValue);
+            event.getWhoClicked().closeInventory();
         }
     }
 }

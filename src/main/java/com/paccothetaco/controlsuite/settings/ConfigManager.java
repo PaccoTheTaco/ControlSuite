@@ -77,6 +77,25 @@ public class ConfigManager {
         return authorizedPlayers.contains(playerUUID.toString());
     }
 
+    public void addFlyAuthorizedPlayer(UUID playerUUID) {
+        List<String> authorizedPlayers = config.getStringList("flyAuthorizedPlayers");
+        authorizedPlayers.add(playerUUID.toString());
+        config.set("flyAuthorizedPlayers", authorizedPlayers);
+        saveConfig();
+    }
+
+    public void removeFlyAuthorizedPlayer(UUID playerUUID) {
+        List<String> authorizedPlayers = config.getStringList("flyAuthorizedPlayers");
+        authorizedPlayers.remove(playerUUID.toString());
+        config.set("flyAuthorizedPlayers", authorizedPlayers);
+        saveConfig();
+    }
+
+    public boolean isFlyPlayerAuthorized(UUID playerUUID) {
+        List<String> authorizedPlayers = config.getStringList("flyAuthorizedPlayers");
+        return authorizedPlayers.contains(playerUUID.toString());
+    }
+
     private void saveConfig() {
         try {
             config.save(configFile);

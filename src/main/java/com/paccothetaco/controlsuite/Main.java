@@ -6,6 +6,7 @@ import com.paccothetaco.controlsuite.enderchest.EnderchestCommand;
 import com.paccothetaco.controlsuite.enderchest.AddAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.enderchest.RemoveAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.Invsee.InvseeCommand;
+import com.paccothetaco.controlsuite.fly.FlyCommand;
 import com.paccothetaco.controlsuite.settings.SettingsCommand;
 import com.paccothetaco.controlsuite.settings.ConfigManager;
 import com.paccothetaco.controlsuite.home.HomeCommand;
@@ -17,6 +18,8 @@ import com.paccothetaco.controlsuite.warp.WarpCommand;
 import com.paccothetaco.controlsuite.warp.SetWarpCommand;
 import com.paccothetaco.controlsuite.commands.GiveAllPermsCommand;
 import com.paccothetaco.controlsuite.commands.GamemodeShort;
+import com.paccothetaco.controlsuite.commands.AddFlyAuthorizedPlayerCommand;
+import com.paccothetaco.controlsuite.commands.RemoveFlyAuthorizedPlayerCommand;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -52,6 +55,9 @@ public final class Main extends JavaPlugin {
         this.getCommand("setwarp").setExecutor(new SetWarpCommand(getConfig()));
         this.getCommand("giveallperms").setExecutor(new GiveAllPermsCommand(configManager));
         this.getCommand("gm").setExecutor(new GamemodeShort());
+        this.getCommand("fly").setExecutor(new FlyCommand(configManager));
+        this.getCommand("addfly").setExecutor(new AddFlyAuthorizedPlayerCommand(configManager));
+        this.getCommand("removefly").setExecutor(new RemoveFlyAuthorizedPlayerCommand(configManager));
 
         getServer().getPluginManager().registerEvents(new InvseeListener(), this);
         getServer().getPluginManager().registerEvents(new SettingsListener(configManager, this), this);
