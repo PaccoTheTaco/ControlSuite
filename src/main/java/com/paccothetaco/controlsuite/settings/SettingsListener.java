@@ -36,6 +36,8 @@ public class SettingsListener implements Listener {
                 SettingsGUI.openClanSettingsMenu((Player) event.getWhoClicked());
             } else if (clickedItem.getType() == Material.FEATHER) {
                 SettingsGUI.openFlySettingsMenu((Player) event.getWhoClicked());
+            } else if (clickedItem.getType() == Material.DIAMOND_SWORD) {
+                SettingsGUI.openPvpSettingsMenu((Player) event.getWhoClicked());
             }
         } else if (title.equals(ChatColor.GOLD + "Use /enderchest")) {
             event.setCancelled(true);
@@ -92,7 +94,7 @@ public class SettingsListener implements Listener {
                 enableClans = true;
             }
 
-            configManager.saveSetting("clan-system-enabled", String.valueOf(enableClans));
+            configManager.saveSetting("clan-system-enabled", enableClans);
             event.getWhoClicked().closeInventory();
 
             if (enableClans) {
@@ -119,6 +121,24 @@ public class SettingsListener implements Listener {
             }
 
             configManager.saveSetting("fly", settingValue);
+            event.getWhoClicked().closeInventory();
+        } else if (title.equals(ChatColor.RED + "PvP Settings")) {
+            event.setCancelled(true);
+
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+            boolean enablePvp = false;
+            if (clickedItem.getType() == Material.RED_WOOL) {
+                event.getWhoClicked().sendMessage(ChatColor.RED + "PvP deactivated");
+                enablePvp = false;
+            } else if (clickedItem.getType() == Material.GREEN_WOOL) {
+                event.getWhoClicked().sendMessage(ChatColor.GREEN + "PvP activated");
+                enablePvp = true;
+            }
+
+            configManager.saveSetting("pvp-enabled", enablePvp);
+            configManager.loadConfig();
             event.getWhoClicked().closeInventory();
         }
     }

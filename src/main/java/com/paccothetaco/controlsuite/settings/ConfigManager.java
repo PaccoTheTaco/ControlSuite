@@ -26,16 +26,34 @@ public class ConfigManager {
         config = YamlConfiguration.loadConfiguration(configFile);
     }
 
-    public void saveSetting(String setting, String value) {
+    public void saveSetting(String setting, Object value) {
         config.set(setting, value);
         saveConfig();
+        System.out.println("Setting saved: " + setting + " = " + value);
+    }
+
+    public void loadConfig() {
+        try {
+            config.load(configFile);
+            System.out.println("Config loaded successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getSetting(String setting) {
         return config.getString(setting, "noone");
     }
 
+    public boolean isPvpEnabled() {
+        loadConfig();
+        boolean pvpEnabled = config.getBoolean("pvp-enabled", false);
+        System.out.println("PvP enabled: " + pvpEnabled);
+        return pvpEnabled;
+    }
+
     public boolean isClanSystemEnabled() {
+        loadConfig();
         return config.getBoolean("clan-system-enabled", true);
     }
 
@@ -99,6 +117,7 @@ public class ConfigManager {
     private void saveConfig() {
         try {
             config.save(configFile);
+            System.out.println("Config saved successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }

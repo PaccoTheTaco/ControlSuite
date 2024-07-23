@@ -7,6 +7,7 @@ import com.paccothetaco.controlsuite.enderchest.AddAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.enderchest.RemoveAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.Invsee.InvseeCommand;
 import com.paccothetaco.controlsuite.fly.FlyCommand;
+import com.paccothetaco.controlsuite.listeners.PvPListener;
 import com.paccothetaco.controlsuite.settings.SettingsCommand;
 import com.paccothetaco.controlsuite.settings.ConfigManager;
 import com.paccothetaco.controlsuite.home.HomeCommand;
@@ -65,6 +66,8 @@ public final class Main extends JavaPlugin {
         if (configManager.isClanSystemEnabled()) {
             registerClanFeatures();
         }
+
+        getServer().getPluginManager().registerEvents(new PvPListener(configManager), this);
     }
 
     @Override

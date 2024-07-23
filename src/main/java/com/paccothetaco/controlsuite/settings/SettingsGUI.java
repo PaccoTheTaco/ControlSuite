@@ -37,6 +37,12 @@ public class SettingsGUI {
         flyItem.setItemMeta(flyMeta);
         settingsMenu.setItem(3, flyItem);
 
+        ItemStack pvpItem = new ItemStack(Material.DIAMOND_SWORD);
+        ItemMeta pvpMeta = pvpItem.getItemMeta();
+        pvpMeta.setDisplayName(ChatColor.RED + "PvP Settings");
+        pvpItem.setItemMeta(pvpMeta);
+        settingsMenu.setItem(4, pvpItem);
+
         player.openInventory(settingsMenu);
     }
 
@@ -132,5 +138,24 @@ public class SettingsGUI {
         flySettingsMenu.setItem(6, noOneItem);
 
         player.openInventory(flySettingsMenu);
+    }
+
+    public static void openPvpSettingsMenu(Player player) {
+        Inventory pvpSettingsMenu = Bukkit.createInventory(null, 9, ChatColor.RED + "PvP Settings");
+
+        ItemStack activateItem = new ItemStack(Material.GREEN_WOOL);
+        ItemMeta activateMeta = activateItem.getItemMeta();
+        activateMeta.setDisplayName(ChatColor.GREEN + "Activate PvP");
+        activateItem.setItemMeta(activateMeta);
+
+        ItemStack deactivateItem = new ItemStack(Material.RED_WOOL);
+        ItemMeta deactivateMeta = deactivateItem.getItemMeta();
+        deactivateMeta.setDisplayName(ChatColor.RED + "Deactivate PvP");
+        deactivateItem.setItemMeta(deactivateMeta);
+
+        pvpSettingsMenu.setItem(3, activateItem);
+        pvpSettingsMenu.setItem(5, deactivateItem);
+
+        player.openInventory(pvpSettingsMenu);
     }
 }
