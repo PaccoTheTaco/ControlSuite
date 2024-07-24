@@ -1,24 +1,36 @@
-package com.paccothetaco.controlsuite.clan;
+package com.paccothetaco.controlsuite.listeners;
 
+import com.paccothetaco.controlsuite.Main;
+import com.paccothetaco.controlsuite.clan.Clan;
+import com.paccothetaco.controlsuite.clan.ClanCommand;
+import com.paccothetaco.controlsuite.mute.MuteManager;
+import com.paccothetaco.controlsuite.settings.ConfigManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import com.paccothetaco.controlsuite.Main;
-import com.paccothetaco.controlsuite.settings.ConfigManager;
 
 public class ChatListener implements Listener {
 
     private final Main plugin;
+    private final ConfigManager configManager;
+    private final MuteManager muteManager;
 
-    public ChatListener(Main plugin) {
+    public ChatListener(Main plugin, MuteManager muteManager) {
         this.plugin = plugin;
+        this.configManager = plugin.getConfigManager();
+        this.muteManager = muteManager;
     }
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
-        ConfigManager configManager = plugin.getConfigManager();
+
+        if (muteManager.isPlayerMuted(player.getName())) {
+            player.sendMessage("You are muted and cannot send messages.");
+            event.setCancelled(true);
+            return;
+        }
 
         if (!configManager.isClanSystemEnabled()) {
             return;

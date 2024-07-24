@@ -69,3 +69,12 @@ commands:
   freeze:
     description: "Freezes or unfreezes a player."
     usage: "/freeze <player>"
+  mute:
+    description: "Mutes a player."
+    usage: "/mute <player>"
+  unmute:
+    description: "Unmutes a player."
+    usage: "/unmute <player>"
+  purge:
+    description: "Purges the chat."
+    usage: "/purge"

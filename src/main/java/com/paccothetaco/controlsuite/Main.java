@@ -1,28 +1,29 @@
 package com.paccothetaco.controlsuite;
 
-import com.paccothetaco.controlsuite.Invsee.InvseeListener;
-import com.paccothetaco.controlsuite.clan.*;
-import com.paccothetaco.controlsuite.commands.*;
-import com.paccothetaco.controlsuite.commands.AddFlyAuthorizedPlayerCommand;
-import com.paccothetaco.controlsuite.commands.RemoveFlyAuthorizedPlayerCommand;
-import com.paccothetaco.controlsuite.enderchest.EnderchestCommand;
-import com.paccothetaco.controlsuite.enderchest.AddAuthorizedPlayerCommand;
-import com.paccothetaco.controlsuite.enderchest.RemoveAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.Invsee.InvseeCommand;
+import com.paccothetaco.controlsuite.clan.ClanCommand;
+import com.paccothetaco.controlsuite.clan.ClanListener;
+import com.paccothetaco.controlsuite.clan.ClanManager;
+import com.paccothetaco.controlsuite.commands.AddFlyAuthorizedPlayerCommand;
+import com.paccothetaco.controlsuite.commands.PurgeCommand;
+import com.paccothetaco.controlsuite.commands.RemoveFlyAuthorizedPlayerCommand;
+import com.paccothetaco.controlsuite.enderchest.AddAuthorizedPlayerCommand;
+import com.paccothetaco.controlsuite.enderchest.EnderchestCommand;
+import com.paccothetaco.controlsuite.enderchest.RemoveAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.fly.FlyCommand;
-import com.paccothetaco.controlsuite.listeners.PvPListener;
-import com.paccothetaco.controlsuite.settings.SettingsCommand;
-import com.paccothetaco.controlsuite.settings.ConfigManager;
-import com.paccothetaco.controlsuite.home.HomeCommand;
-import com.paccothetaco.controlsuite.home.SetHomeCommand;
 import com.paccothetaco.controlsuite.home.AddHomeAuthorizedPlayerCommand;
+import com.paccothetaco.controlsuite.home.HomeCommand;
 import com.paccothetaco.controlsuite.home.RemoveHomeAuthorizedPlayerCommand;
+import com.paccothetaco.controlsuite.home.SetHomeCommand;
+import com.paccothetaco.controlsuite.listeners.ChatListener;
+import com.paccothetaco.controlsuite.listeners.PvPListener;
+import com.paccothetaco.controlsuite.mute.MuteCommand;
+import com.paccothetaco.controlsuite.mute.MuteManager;
+import com.paccothetaco.controlsuite.settings.ConfigManager;
+import com.paccothetaco.controlsuite.settings.SettingsCommand;
 import com.paccothetaco.controlsuite.settings.SettingsListener;
 import com.paccothetaco.controlsuite.warp.WarpCommand;
 import com.paccothetaco.controlsuite.warp.SetWarpCommand;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
@@ -30,7 +31,7 @@ public final class Main extends JavaPlugin {
     private ClanManager clanManager;
     private ClanCommand clanCommand;
     private ClanListener clanListener;
-    private ChatListener chatListener;
+    private MuteManager muteManager;
 
     @Override
     public void onEnable() {
@@ -38,8 +39,7 @@ public final class Main extends JavaPlugin {
         this.clanManager = new ClanManager(this);
         this.clanCommand = new ClanCommand();
         this.clanListener = new ClanListener(this);
-        this.chatListener = new ChatListener(this);
-        FreezeCommand freezeCommand = new FreezeCommand(this);
+        this.muteManager = new MuteManager();
 
         this.clanManager.loadClans();
 
@@ -54,15 +54,14 @@ public final class Main extends JavaPlugin {
         this.getCommand("removehome").setExecutor(new RemoveHomeAuthorizedPlayerCommand(configManager));
         this.getCommand("warp").setExecutor(new WarpCommand(getConfig()));
         this.getCommand("setwarp").setExecutor(new SetWarpCommand(getConfig()));
-        this.getCommand("giveallperms").setExecutor(new GiveAllPermsCommand(configManager));
-        this.getCommand("gm").setExecutor(new GamemodeShort());
         this.getCommand("fly").setExecutor(new FlyCommand(configManager));
         this.getCommand("addfly").setExecutor(new AddFlyAuthorizedPlayerCommand(configManager));
         this.getCommand("removefly").setExecutor(new RemoveFlyAuthorizedPlayerCommand(configManager));
-        this.getCommand("freeze").setExecutor(freezeCommand);
-        getServer().getPluginManager().registerEvents(freezeCommand, this);
+        this.getCommand("purge").setExecutor(new PurgeCommand());
+        this.getCommand("mute").setExecutor(new MuteCommand(this));
+        this.getCommand("unmute").setExecutor(new MuteCommand(this));
 
-        getServer().getPluginManager().registerEvents(new InvseeListener(), this);
+        getServer().getPluginManager().registerEvents(new ChatListener(this, muteManager), this);
         getServer().getPluginManager().registerEvents(new SettingsListener(configManager, this), this);
 
         if (configManager.isClanSystemEnabled()) {
@@ -86,21 +85,20 @@ public final class Main extends JavaPlugin {
         return clanManager;
     }
 
+    public MuteManager getMuteManager() {
+        return muteManager;
+    }
+
     public void registerClanFeatures() {
-        PluginCommand clanCommand = getCommand("clan");
-        if (clanCommand != null) {
-            clanCommand.setExecutor(this.clanCommand);
+        if (getCommand("clan") != null) {
+            getCommand("clan").setExecutor(this.clanCommand);
         }
         getServer().getPluginManager().registerEvents(this.clanListener, this);
-        getServer().getPluginManager().registerEvents(this.chatListener, this);
     }
 
     public void unregisterClanFeatures() {
-        PluginCommand clanCommand = getCommand("clan");
-        if (clanCommand != null) {
-            clanCommand.setExecutor(null);
+        if (getCommand("clan") != null) {
+            getCommand("clan").setExecutor(null);
         }
-        AsyncPlayerChatEvent.getHandlerList().unregister(this.chatListener);
-        InventoryClickEvent.getHandlerList().unregister(this.clanListener);
     }
 }
