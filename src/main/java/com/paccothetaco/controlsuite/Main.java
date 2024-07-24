@@ -2,6 +2,9 @@ package com.paccothetaco.controlsuite;
 
 import com.paccothetaco.controlsuite.Invsee.InvseeListener;
 import com.paccothetaco.controlsuite.clan.*;
+import com.paccothetaco.controlsuite.commands.*;
+import com.paccothetaco.controlsuite.commands.AddFlyAuthorizedPlayerCommand;
+import com.paccothetaco.controlsuite.commands.RemoveFlyAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.enderchest.EnderchestCommand;
 import com.paccothetaco.controlsuite.enderchest.AddAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.enderchest.RemoveAuthorizedPlayerCommand;
@@ -17,10 +20,6 @@ import com.paccothetaco.controlsuite.home.RemoveHomeAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.settings.SettingsListener;
 import com.paccothetaco.controlsuite.warp.WarpCommand;
 import com.paccothetaco.controlsuite.warp.SetWarpCommand;
-import com.paccothetaco.controlsuite.commands.GiveAllPermsCommand;
-import com.paccothetaco.controlsuite.commands.GamemodeShort;
-import com.paccothetaco.controlsuite.commands.AddFlyAuthorizedPlayerCommand;
-import com.paccothetaco.controlsuite.commands.RemoveFlyAuthorizedPlayerCommand;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -40,6 +39,7 @@ public final class Main extends JavaPlugin {
         this.clanCommand = new ClanCommand();
         this.clanListener = new ClanListener(this);
         this.chatListener = new ChatListener(this);
+        FreezeCommand freezeCommand = new FreezeCommand(this);
 
         this.clanManager.loadClans();
 
@@ -59,6 +59,8 @@ public final class Main extends JavaPlugin {
         this.getCommand("fly").setExecutor(new FlyCommand(configManager));
         this.getCommand("addfly").setExecutor(new AddFlyAuthorizedPlayerCommand(configManager));
         this.getCommand("removefly").setExecutor(new RemoveFlyAuthorizedPlayerCommand(configManager));
+        this.getCommand("freeze").setExecutor(freezeCommand);
+        getServer().getPluginManager().registerEvents(freezeCommand, this);
 
         getServer().getPluginManager().registerEvents(new InvseeListener(), this);
         getServer().getPluginManager().registerEvents(new SettingsListener(configManager, this), this);
