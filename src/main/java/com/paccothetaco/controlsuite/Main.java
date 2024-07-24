@@ -22,6 +22,10 @@ import com.paccothetaco.controlsuite.mute.MuteManager;
 import com.paccothetaco.controlsuite.settings.ConfigManager;
 import com.paccothetaco.controlsuite.settings.SettingsCommand;
 import com.paccothetaco.controlsuite.settings.SettingsListener;
+import com.paccothetaco.controlsuite.tpa.TpaAcceptCommand;
+import com.paccothetaco.controlsuite.tpa.TpaCommand;
+import com.paccothetaco.controlsuite.tpa.TpaDenyCommand;
+import com.paccothetaco.controlsuite.tpa.TpaManager;
 import com.paccothetaco.controlsuite.warp.WarpCommand;
 import com.paccothetaco.controlsuite.warp.SetWarpCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -69,6 +73,11 @@ public final class Main extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(new PvPListener(configManager), this);
+
+        TpaManager tpaManager = new TpaManager();
+        this.getCommand("tpa").setExecutor(new TpaCommand(tpaManager));
+        this.getCommand("tpaaccept").setExecutor(new TpaAcceptCommand(tpaManager));
+        this.getCommand("tpadeny").setExecutor(new TpaDenyCommand(tpaManager));
     }
 
     @Override

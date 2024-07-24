@@ -78,3 +78,12 @@ commands:
   purge:
     description: "Purges the chat."
     usage: "/purge"
+  tpa:
+    description: "Request to teleport to another player"
+    usage: "/tpa <player>"
+  tpaaccept:
+    description: "Accept a teleport request"
+    usage: "/tpaaccept"
+  tpadeny:
+    description: "Deny a teleport request"
+    usage: "/tpadeny"
