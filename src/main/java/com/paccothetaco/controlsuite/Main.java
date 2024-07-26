@@ -69,7 +69,7 @@ public final class Main extends JavaPlugin {
         this.getCommand("mute").setExecutor(new MuteCommand(this));
         this.getCommand("unmute").setExecutor(new MuteCommand(this));
         this.getCommand("tictactoe").setExecutor(new TicTacToeCommand());
-        getServer().getPluginManager().registerEvents(new InventoryClickListener(ticTacToeGUI), this);
+        getServer().getPluginManager().registerEvents(new TicTacToeListener(ticTacToeGUI), this);
 
         this.getCommand("tictactoeaccept").setExecutor(new TicTacToeAcceptCommand(ticTacToeManager, ticTacToeGUI));
         this.getCommand("tictactoedeny").setExecutor(new TicTacToeDenyCommand());

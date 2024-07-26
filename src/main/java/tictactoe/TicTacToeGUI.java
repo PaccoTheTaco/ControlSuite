@@ -33,16 +33,24 @@ public class TicTacToeGUI {
         Player player = (Player) event.getWhoClicked();
         int slot = event.getRawSlot();
 
-        if (slot < 0 || slot >= 27 || slot % 9 >= 3) {
+        if (slot < 0 || slot >= 27) {
             event.setCancelled(true);
             return;
         }
 
-        int row = slot / 9;
-        int col = slot % 3;
+        int[] slots = {3, 4, 5, 12, 13, 14, 21, 22, 23};
+        int row = -1, col = -1;
 
-        if (gameManager.getCurrentPlayer() != player) {
-            player.sendMessage("It's not your turn.");
+        for (int i = 0; i < slots.length; i++) {
+            if (slot == slots[i]) {
+                row = i / 3;
+                col = i % 3;
+                break;
+            }
+        }
+
+        if (row == -1 || col == -1 || gameManager.getCurrentPlayer() != player) {
+            player.sendMessage("It's not your turn or invalid move.");
             event.setCancelled(true);
             return;
         }
@@ -55,8 +63,12 @@ public class TicTacToeGUI {
 
     private void updateBoard(Inventory gameBoard) {
         char[][] board = gameManager.getBoard();
+        int[] slots = {3, 4, 5, 12, 13, 14, 21, 22, 23};
+
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
+                int slot = slots[i * 3 + j];
+
                 ItemStack item = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
                 ItemMeta meta = item.getItemMeta();
 
@@ -71,12 +83,12 @@ public class TicTacToeGUI {
                 }
 
                 item.setItemMeta(meta);
-                gameBoard.setItem(i * 9 + j, item);
+                gameBoard.setItem(slot, item);
             }
         }
 
-        for (int i = 3; i < 27; i++) {
-            if (i % 9 >= 3) {
+        for (int i = 0; i < gameBoard.getSize(); i++) {
+            if (gameBoard.getItem(i) == null) {
                 gameBoard.setItem(i, fillerItem);
             }
         }

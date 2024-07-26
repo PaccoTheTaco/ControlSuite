@@ -3,12 +3,11 @@ package tictactoe;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import tictactoe.TicTacToeGUI;
 
-public class InventoryClickListener implements Listener {
-    private TicTacToeGUI ticTacToeGUI;
+public class TicTacToeListener implements Listener {
+    private final TicTacToeGUI ticTacToeGUI;
 
-    public InventoryClickListener(TicTacToeGUI ticTacToeGUI) {
+    public TicTacToeListener(TicTacToeGUI ticTacToeGUI) {
         this.ticTacToeGUI = ticTacToeGUI;
     }
 
