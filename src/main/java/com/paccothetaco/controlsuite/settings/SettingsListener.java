@@ -38,6 +38,8 @@ public class SettingsListener implements Listener {
                 SettingsGUI.openFlySettingsMenu((Player) event.getWhoClicked());
             } else if (clickedItem.getType() == Material.DIAMOND_SWORD) {
                 SettingsGUI.openPvpSettingsMenu((Player) event.getWhoClicked());
+            } else if (clickedItem.getType() == Material.ENDER_PEARL) {
+                SettingsGUI.openTpaSettingsMenu((Player) event.getWhoClicked());
             }
         } else if (title.equals(ChatColor.GOLD + "Use /enderchest")) {
             event.setCancelled(true);
@@ -139,6 +141,23 @@ public class SettingsListener implements Listener {
 
             configManager.saveSetting("pvp-enabled", enablePvp);
             configManager.loadConfig();
+            event.getWhoClicked().closeInventory();
+        } else if (title.equals(ChatColor.GOLD + "Use /tpa")) {
+            event.setCancelled(true);
+
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+            boolean tpaEnabled = false;
+            if (clickedItem.getType() == Material.RED_WOOL) {
+                event.getWhoClicked().sendMessage(ChatColor.RED + "No one can use /tpa");
+                tpaEnabled = false;
+            } else if (clickedItem.getType() == Material.GREEN_WOOL) {
+                event.getWhoClicked().sendMessage(ChatColor.GREEN + "Everyone can use /tpa");
+                tpaEnabled = true;
+            }
+
+            configManager.saveSetting("tpa-enabled", tpaEnabled);
             event.getWhoClicked().closeInventory();
         }
     }

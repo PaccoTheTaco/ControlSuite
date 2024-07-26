@@ -57,6 +57,11 @@ public class ConfigManager {
         return config.getBoolean("clan-system-enabled", true);
     }
 
+    public boolean isTpaEnabled() {
+        loadConfig();
+        return config.getBoolean("tpa-enabled", true);
+    }
+
     public void addAuthorizedPlayer(UUID playerUUID) {
         List<String> authorizedPlayers = config.getStringList("authorizedPlayers");
         authorizedPlayers.add(playerUUID.toString());

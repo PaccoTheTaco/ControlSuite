@@ -75,9 +75,9 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PvPListener(configManager), this);
 
         TpaManager tpaManager = new TpaManager();
-        this.getCommand("tpa").setExecutor(new TpaCommand(tpaManager));
-        this.getCommand("tpaaccept").setExecutor(new TpaAcceptCommand(tpaManager));
-        this.getCommand("tpadeny").setExecutor(new TpaDenyCommand(tpaManager));
+        this.getCommand("tpa").setExecutor(new TpaCommand(tpaManager, configManager));
+        this.getCommand("tpaaccept").setExecutor(new TpaAcceptCommand(tpaManager, configManager));
+        this.getCommand("tpadeny").setExecutor(new TpaDenyCommand(tpaManager, configManager));
     }
 
     @Override

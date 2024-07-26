@@ -43,6 +43,12 @@ public class SettingsGUI {
         pvpItem.setItemMeta(pvpMeta);
         settingsMenu.setItem(4, pvpItem);
 
+        ItemStack tpaItem = new ItemStack(Material.ENDER_PEARL);
+        ItemMeta tpaMeta = tpaItem.getItemMeta();
+        tpaMeta.setDisplayName(ChatColor.GOLD + "Use /tpa");
+        tpaItem.setItemMeta(tpaMeta);
+        settingsMenu.setItem(5, tpaItem);
+
         player.openInventory(settingsMenu);
     }
 
@@ -139,7 +145,6 @@ public class SettingsGUI {
 
         player.openInventory(flySettingsMenu);
     }
-
     public static void openPvpSettingsMenu(Player player) {
         Inventory pvpSettingsMenu = Bukkit.createInventory(null, 9, ChatColor.RED + "PvP Settings");
 
@@ -157,5 +162,24 @@ public class SettingsGUI {
         pvpSettingsMenu.setItem(5, deactivateItem);
 
         player.openInventory(pvpSettingsMenu);
+    }
+
+    public static void openTpaSettingsMenu(Player player) {
+        Inventory tpaSettingsMenu = Bukkit.createInventory(null, 9, ChatColor.GOLD + "Use /tpa");
+
+        ItemStack activeItem = new ItemStack(Material.GREEN_WOOL);
+        ItemMeta activeMeta = activeItem.getItemMeta();
+        activeMeta.setDisplayName(ChatColor.GREEN + "Active");
+        activeItem.setItemMeta(activeMeta);
+
+        ItemStack deactiveItem = new ItemStack(Material.RED_WOOL);
+        ItemMeta deactiveMeta = deactiveItem.getItemMeta();
+        deactiveMeta.setDisplayName(ChatColor.RED + "Deactive");
+        deactiveItem.setItemMeta(deactiveMeta);
+
+        tpaSettingsMenu.setItem(3, activeItem);
+        tpaSettingsMenu.setItem(5, deactiveItem);
+
+        player.openInventory(tpaSettingsMenu);
     }
 }
