@@ -5,6 +5,7 @@ import com.paccothetaco.controlsuite.clan.ClanCommand;
 import com.paccothetaco.controlsuite.clan.ClanListener;
 import com.paccothetaco.controlsuite.clan.ClanManager;
 import com.paccothetaco.controlsuite.commands.AddFlyAuthorizedPlayerCommand;
+import com.paccothetaco.controlsuite.commands.GamemodeShort;
 import com.paccothetaco.controlsuite.commands.PurgeCommand;
 import com.paccothetaco.controlsuite.commands.RemoveFlyAuthorizedPlayerCommand;
 import com.paccothetaco.controlsuite.enderchest.AddAuthorizedPlayerCommand;
@@ -70,6 +71,7 @@ public final class Main extends JavaPlugin {
         this.getCommand("unmute").setExecutor(new MuteCommand(this));
         this.getCommand("tictactoe").setExecutor(new TicTacToeCommand());
         getServer().getPluginManager().registerEvents(new TicTacToeListener(ticTacToeGUI), this);
+        this.getCommand("gm").setExecutor(new GamemodeShort());
 
         this.getCommand("tictactoeaccept").setExecutor(new TicTacToeAcceptCommand(ticTacToeManager, ticTacToeGUI));
         this.getCommand("tictactoedeny").setExecutor(new TicTacToeDenyCommand());

@@ -15,27 +15,42 @@ public class ConfigManager {
     private final FileConfiguration config;
 
     public ConfigManager(JavaPlugin plugin) {
+        if (!plugin.getDataFolder().exists()) {
+            plugin.getDataFolder().mkdirs();
+        }
+
         configFile = new File(plugin.getDataFolder(), "settings.yml");
+
         if (!configFile.exists()) {
             try {
                 configFile.createNewFile();
+                config = YamlConfiguration.loadConfiguration(configFile);
+                setDefaults();
+                saveConfig();
             } catch (IOException e) {
                 e.printStackTrace();
+                throw new RuntimeException("Unable to create settings.yml file.", e);
             }
+        } else {
+            config = YamlConfiguration.loadConfiguration(configFile);
         }
-        config = YamlConfiguration.loadConfiguration(configFile);
+    }
+
+    private void setDefaults() {
+        config.addDefault("pvp-enabled", true);
+        config.addDefault("clan-system-enabled", false);
+        config.addDefault("tpa-enabled", false);
+        config.options().copyDefaults(true);
     }
 
     public void saveSetting(String setting, Object value) {
         config.set(setting, value);
         saveConfig();
-        System.out.println("Setting saved: " + setting + " = " + value);
     }
 
     public void loadConfig() {
         try {
             config.load(configFile);
-            System.out.println("Config loaded successfully.");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -47,9 +62,7 @@ public class ConfigManager {
 
     public boolean isPvpEnabled() {
         loadConfig();
-        boolean pvpEnabled = config.getBoolean("pvp-enabled", false);
-        System.out.println("PvP enabled: " + pvpEnabled);
-        return pvpEnabled;
+        return config.getBoolean("pvp-enabled", false);
     }
 
     public boolean isClanSystemEnabled() {
@@ -122,7 +135,6 @@ public class ConfigManager {
     private void saveConfig() {
         try {
             config.save(configFile);
-            System.out.println("Config saved successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }
