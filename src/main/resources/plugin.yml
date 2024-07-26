@@ -87,3 +87,12 @@ commands:
   tpadeny:
     description: "Deny a teleport request"
     usage: "/tpadeny"
+  tictactoe:
+    description: "Play a game of Tic Tac Toe"
+    usage: "/tictactoe <player>"
+  tictactoeaccept:
+    description: "Accept a Tic Tac Toe request"
+    usage: "/tictactoeaccept"
+  tictactoedeny:
+    description: "Deny a Tic Tac Toe request"
+    usage: "/tictactoedeny"

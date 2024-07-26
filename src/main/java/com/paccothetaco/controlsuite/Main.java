@@ -29,6 +29,7 @@ import com.paccothetaco.controlsuite.tpa.TpaManager;
 import com.paccothetaco.controlsuite.warp.WarpCommand;
 import com.paccothetaco.controlsuite.warp.SetWarpCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import tictactoe.*;
 
 public final class Main extends JavaPlugin {
     private ConfigManager configManager;
@@ -44,6 +45,9 @@ public final class Main extends JavaPlugin {
         this.clanCommand = new ClanCommand();
         this.clanListener = new ClanListener(this);
         this.muteManager = new MuteManager();
+
+        TicTacToeManager ticTacToeManager = new TicTacToeManager();
+        TicTacToeGUI ticTacToeGUI = new TicTacToeGUI(ticTacToeManager);
 
         this.clanManager.loadClans();
 
@@ -64,7 +68,11 @@ public final class Main extends JavaPlugin {
         this.getCommand("purge").setExecutor(new PurgeCommand());
         this.getCommand("mute").setExecutor(new MuteCommand(this));
         this.getCommand("unmute").setExecutor(new MuteCommand(this));
+        this.getCommand("tictactoe").setExecutor(new TicTacToeCommand());
+        getServer().getPluginManager().registerEvents(new InventoryClickListener(ticTacToeGUI), this);
 
+        this.getCommand("tictactoeaccept").setExecutor(new TicTacToeAcceptCommand(ticTacToeManager, ticTacToeGUI));
+        this.getCommand("tictactoedeny").setExecutor(new TicTacToeDenyCommand());
         getServer().getPluginManager().registerEvents(new ChatListener(this, muteManager), this);
         getServer().getPluginManager().registerEvents(new SettingsListener(configManager, this), this);
 
