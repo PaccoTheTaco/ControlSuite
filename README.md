@@ -8,11 +8,11 @@ This is the settings menu for switching things on and off:
 
 This is what it looks like when you mute someone and when you send a message when you are muted 
 
-![mute](example_pics\mute.png)
+![mute](/example_pics/mute.png)
 
 Here you can see how /warp and /setwarp work 
 
-![warp](example_pics\warp.png)
+![warp](/example_pics/warp.png)
 
 Download the latest .jar file from https://github.com/PaccoTheTaco/ControlSuite/releases and place it in your server folder under plugins
 
