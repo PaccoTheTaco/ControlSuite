@@ -4,7 +4,7 @@ Here are a few insights into the plugin:
 
 This is the settings menu for switching things on and off: 
 
-![settings](example_pics\settings.png)
+![settings](/example_pics/settings.png)
 
 This is what it looks like when you mute someone and when you send a message when you are muted 
 
